@@ -1,0 +1,29 @@
+{
+  "id": "c8f64b4f-0f8d-4bd4-8deb-9fbd4221b0aa",
+  "name": "List Episodes",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "list.episodes",
+      "affectedContexts": [],
+      "parameters": [],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": []
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1527138872,
+  "fallbackIntent": false,
+  "events": []
+}

@@ -1,0 +1,88 @@
+[
+  {
+    "id": "056d6169-b96a-4582-86e0-5ce16054878c",
+    "data": [
+      {
+        "text": "play ",
+        "userDefined": false
+      },
+      {
+        "text": "one",
+        "alias": "episode",
+        "meta": "@Episode",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1527061928
+  },
+  {
+    "id": "17c41018-5abd-4f21-9391-34633691380e",
+    "data": [
+      {
+        "text": "play episode ",
+        "userDefined": false
+      },
+      {
+        "text": "one",
+        "alias": "episode",
+        "meta": "@Episode",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1527061928
+  },
+  {
+    "id": "a6c6fc58-59b1-4bae-9c0c-a5ca72dfca7d",
+    "data": [
+      {
+        "text": "one",
+        "alias": "episode",
+        "meta": "@Episode",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1527061928
+  },
+  {
+    "id": "adb80d96-e279-46c1-b5cd-43bb9dcb4fd6",
+    "data": [
+      {
+        "text": "show me episode ",
+        "userDefined": false
+      },
+      {
+        "text": "one",
+        "alias": "episode",
+        "meta": "@Episode",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1527061928
+  },
+  {
+    "id": "49d59ac8-3093-4f39-858d-54659db6033b",
+    "data": [
+      {
+        "text": "episode ",
+        "userDefined": false
+      },
+      {
+        "text": "one",
+        "alias": "episode",
+        "meta": "@Episode",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1527061928
+  }
+]

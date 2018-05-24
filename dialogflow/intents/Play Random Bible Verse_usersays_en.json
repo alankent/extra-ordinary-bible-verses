@@ -1,0 +1,98 @@
+[
+  {
+    "id": "ab9e2a25-edb2-44f1-a7bc-d97a375739bc",
+    "data": [
+      {
+        "text": "more",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1526792253
+  },
+  {
+    "id": "6513d3f8-c897-4aaa-a41b-3489a2f4ac92",
+    "data": [
+      {
+        "text": "say a verse",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1526792001
+  },
+  {
+    "id": "0e65299d-b945-4b82-a174-108cec2a3dc2",
+    "data": [
+      {
+        "text": "another verse",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1526792253
+  },
+  {
+    "id": "86b44929-2e90-4519-9f42-9c81fec5ba4b",
+    "data": [
+      {
+        "text": "Tell me a verse",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1526792001
+  },
+  {
+    "id": "7d99e7a8-76e2-428a-9ac7-4d7ee0af921f",
+    "data": [
+      {
+        "text": "Say a bible verse",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1526792001
+  },
+  {
+    "id": "2976312a-b6c5-4603-9643-ca0acae1c59f",
+    "data": [
+      {
+        "text": "pick a verse for me",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1526792001
+  },
+  {
+    "id": "d9824b71-10ab-45f9-8e87-fd53193c66e8",
+    "data": [
+      {
+        "text": "again",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1526792253
+  },
+  {
+    "id": "336b9124-bdd7-41b5-8e66-a02d85ac25c5",
+    "data": [
+      {
+        "text": "Play random bible verse",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1526792001
+  }
+]

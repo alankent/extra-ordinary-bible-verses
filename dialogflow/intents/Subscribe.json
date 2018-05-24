@@ -1,0 +1,29 @@
+{
+  "id": "b44e45d7-323f-4358-a588-43de0b26d184",
+  "name": "Subscribe",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "subscribe",
+      "affectedContexts": [],
+      "parameters": [],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": []
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1527147406,
+  "fallbackIntent": false,
+  "events": []
+}
