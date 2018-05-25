@@ -1,6 +1,5 @@
 // Extra Ordinary Bible Verses - the Google Assistant app!
 
-
 'use strict';
  
 const {
@@ -9,7 +8,7 @@ const {
     Button,
     Image,
     Suggestions,
-    SimpleResponse,
+    NewSurface,
 } = require('actions-on-google');
 const functions = require('firebase-functions');
 
@@ -291,13 +290,46 @@ app.intent('Play Random Bible Verse', (conv) => {
     }
 });
 
+app.intent('Play Specific Verse Number', (conv, params) => {
+    console.log("Play Specific Verse");
+
+    let verseId = params.verse;
+    if (verseId === null || !(verseId in bibleVerses)) {
+        // Should not happen, but play it safe.
+        verseId = 1;
+    }
+    console.log(`  ==> Play verse ${verseId}`);
+
+    const verse = bibleVerses[verseId];
+    const {ref, text, characterName, characterUrl, mp3Url} = verse;
+    const verseFrom = pickRandomMessage(verseFromByCharacter[characterName]);
+    
+    conv.ask(new Suggestions(['Another verse', 'List Episodes', 'Bye']));
+    conv.data.fallbackCount = 0;
+      
+    if (conv.hasScreen) {
+        conv.ask(`<speak><s><audio src="${verseFrom.mp3Url}">${verseFrom.text}</audio></s> <audio src='${mp3Url}'></audio></speak>`);
+        conv.ask(new BasicCard({
+            title: ref,
+            subTitle: characterName,
+            image: new Image({
+                url: characterUrl,
+                alt: characterName,
+            }),
+            text: text,
+        }));
+    } else {
+        conv.ask(`<speak><s><audio src="${verseFrom.mp3Url}">${verseFrom.text}</audio></s> <audio src='${mp3Url}'>${text}</audio></speak>`);
+    }
+});
+
 app.intent('Play Episode', (conv, params) => {
 
     let episode = params.episode;
     console.log(`Play Episode ${episode}`);
     conv.data.fallbackCount = 0;
 
-    if (!episode) {
+    if (episode === null) {
         conv.ask(new Suggestions(['List episodes', 'Play episode 1', 'Bye']));
         const msg = pickRandomMessage(samWhichEpisodeMessages);
         respond(conv, msg.text, msg.mp3Url, "Which episode?", samWhichEpisodeImageUrl, "Sam talking");
@@ -320,8 +352,20 @@ app.intent('Play Episode', (conv, params) => {
                 })
             }));
         } else {
-            // TODO: Extend to try and transfer session to another device with a screen (e.g. the user's phone).
-            conv.ask(`<speak><audio src="${samSorryNoScreenMessage.mp3Url}">${samSorryNoScreenMessage.text}</audio></speak>`);
+            const browserAvailable = conv.available.surfaces.capabilities.has('actions.capability.WEB_BROWSER');
+            if (browserAvailable) {
+                
+                // Save episode number away in session data, so when the app is opened on the new device, the episode number will be there ready.
+                conv.user.storage.episode = episode;
+                
+                const context = `Play episode ${episode}`;
+                const notification = `Episode ${episode}`;
+                const capabilities = ['actions.capability.WEB_BROWSER'];
+                conv.ask(new NewSurface({context, notification, capabilities}));
+                
+            } else {
+                conv.ask(`<speak><audio src="${samSorryNoScreenMessage.mp3Url}">${samSorryNoScreenMessage.text}</audio></speak>`);
+            }
         }
     }
 });
@@ -361,6 +405,48 @@ app.intent('Unsubscribe', (conv) => {
     conv.ask(new Suggestions(['Tell me a verse', 'List episodes', 'Bye']));
     const msg = pickRandomMessage(unsubscribeMessages);
     respond(conv, msg.text, msg.mp3Url, "Unsubscribe", listOfEpisodesImageUrl, "Sam talking");
+});
+
+// This is how the app is launched if control was transferred from a different device.
+app.intent('Get New Surface', (conv, input, newSurface) => {
+    console.log("GET NEW SURFACE");
+
+    if (newSurface.status === 'OK') {
+        
+        conv.data.fallbackCount = 0;
+        conv.ask(new Suggestions(['Tell me a verse', 'Play episode 1', 'List episodes']));
+        
+        // If we got the episode number, offer to play it immediately.
+        if (conv.user.storage.episode !== null) {
+            let episode = conv.user.storage.episode;
+            const {title, imageUrl, videoUrl, summary} = episodes[episode];
+            
+            conv.ask(new Suggestions(['Another verse', 'List Episodes', 'Bye']));
+            conv.ask(`<speak><audio src="${samHereIsYourEpisodeMessage.mp3Url}">${samHereIsYourEpisodeMessage.text}</audio></speak>`);
+            conv.ask(new BasicCard({
+                title: title,
+                image: new Image({
+                    url: imageUrl,
+                    alt: `Episode ${episode}`,
+                }),
+                text: summary,
+                buttons: new Button({
+                    title: 'Play Video',
+                    url: videoUrl,
+                })
+            }));
+            
+        } else { 
+            // We transferred, but the episode number was not specified.
+            const msg = pickRandomMessage(samWelcomeMessages);
+            respond(conv, msg.text, msg.mp3Url, "Welcome!", samWelcomeImageUrl, "Welcoming Sam");
+        }
+    } else {
+        // The user rejected the hand over.
+        const msg = pickRandomMessage(samGoodbyeMessages);
+        respond(conv, msg.text, msg.mp3Url, "Bye!", samGoodbyeImageUrl, "Sam waving goodbye!");
+        conv.close();
+    }
 });
 
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
