@@ -51,11 +51,11 @@ const episodes = {
 const samWelcomeMessages = [
     {
         text: "Hi, I'm Sam! It's super cool to have you here! How can I help?",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Welcome-1.mp3",
     },
     {
         text: "I'ts Super Sam time!",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Welcome-2.mp3",
     },
 ];
 
@@ -64,7 +64,7 @@ const samWelcomeImageUrl = "https://storage.googleapis.com/extra-ordinary-assist
 const samWhichEpisodeMessages = [
     {
         text: "Super sorry! Which episode did you want?",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-WhichEpisode-1.mp3",
     },
 ];
 
@@ -73,11 +73,11 @@ const samWhichEpisodeImageUrl = "https://storage.googleapis.com/extra-ordinary-a
 const samConfusedMessages = [
     {
         text: "Super sorry! I don't understand! You can ask me to tell you a bible verse, play an episode, or subscribe to be notified when there is something new for you.",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Confused-1.mp3",
     },
     {
         text: "I'm super confused right now! Could you ask in a different way? You can ask me to tell you a bible verse, play an episode, or subscribe to be notified when there is something new for you.",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Confused-2.mp3",
     },
 ];
 
@@ -86,7 +86,7 @@ const samConfusedImageUrl = "https://storage.googleapis.com/extra-ordinary-assis
 const samGiveUpMessages = [
     {
         text: "Sorry, my brain may be about to explode. I'm going to take a nap. See you next time!",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-GiveUp-1.mp3",
     }
 ];
 
@@ -95,11 +95,11 @@ const samGiveUpImageUrl = "https://storage.googleapis.com/extra-ordinary-assista
 const samGoodbyeMessages = [
     {
         text: "It was super great seeing you here!",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Goodbye-1.mp3",
     },
     {
         text: "Till next time!",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Goodbye-2.mp3",
     },
 ];
 
@@ -107,21 +107,22 @@ const samGoodbyeImageUrl = "https://storage.googleapis.com/extra-ordinary-assist
 
 const listOfEpisodesMessages = [
     {
+        // This recording has to be updated every time a new episode comes out because speech synthesis is not used.
         text: "1 Friendship, 2 Good Thoughts.",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-List-1.mp3",
     },
 ];
 
-const listOfEpisodesImageUrl = "https://extraordinarytv.files.wordpress.com/2017/12/ep1-teaser-1.png?w=768&h=436&crop=1";
+const listOfEpisodesImageUrl = "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-List.png";
 
 const subscribeMessages = [
     {
         text: "Super cool! I will let you know when I have something great for you! Tricked you! Actually this does not work yet.",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Subscribe-1.mp3",
     },
     {
         text: "Super special content is coming your way soon! Surprise! I can't actually do that yet...",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Subscribe-2.mp3",
     },
 ];
 
@@ -130,11 +131,11 @@ const subscribeImageUrl = "https://storage.googleapis.com/extra-ordinary-assista
 const unsubscribeMessages = [
     {
         text: "Sure thing! Feel free to subscribe again some other time!",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Unsubscribe-1.mp3",
     },
     {
         text: "Okay! No more nagging from me!",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Unsubscribe-2.mp3",
     },
 ];
 
@@ -142,28 +143,33 @@ const unsubscribeImageUrl = "https://storage.googleapis.com/extra-ordinary-assis
 
 const verseFromByCharacter = {
     Sam: [{
-        text: "Here is a verse from me!",
-        mp3Url: "",
+        text: "Here's a verse from me!",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-VerseFrom-Sam.mp3",
         imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Talk.png",
     }],
     Deb: [{
-        text: "Here is a verse from Deb!",
-        mp3Url: "",
+        text: "Here's a verse from Deb!",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-VerseFrom-Deb.mp3",
         imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Deb-Talk.png",
     }],
     Liana: [{
         text: "This verse is super fantastic from Liana!",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-VerseFrom-Liana.mp3",
         imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Liana-Talk.png",
+    }],
+    Elenor: [{
+        text: "I think this is Elenors favorite verse!",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-VerseFrom-Elenor.mp3",
+        imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Elenor-Talk.png",
     }],
     Hank: [{
         text: "Hank agreed to share this verse.",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-VerseFrom-Hank.mp3",
         imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Hank-Talk.png",
     }],
     Helen: [{
         text: "This verse is special to Helen.",
-        mp3Url: "",
+        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-VerseFrom-Helen.mp3",
         imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Helen-Talk.png",
     }],
     Bear: [{
