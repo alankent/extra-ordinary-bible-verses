@@ -179,6 +179,16 @@ const verseFromByCharacter = {
     }],
 };
 
+const samHereIsYourEpisodeMessage = {
+    text: "Here is your episode!",
+    mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-YourEpisode.mp3",
+};
+
+const samSorryNoScreenMessage = {
+    text: "Sorry, I cannot find a screen to play the video on!",
+    mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-NoScreen.mp3",
+};
+
 
 // ============================== Application ================================
 
@@ -296,7 +306,7 @@ app.intent('Play Episode', (conv, params) => {
         
         conv.ask(new Suggestions(['Another verse', 'List Episodes', 'Bye']));
         if (conv.hasScreen) {
-            conv.ask(`Here is your requested episode!`);
+            conv.ask(`<speak><audio src="${samHereIsYourEpisodeMessage.mp3Url}">${samHereIsYourEpisodeMessage.text}</audio></speak>`);
             conv.ask(new BasicCard({
                 title: title,
                 image: new Image({
@@ -310,7 +320,8 @@ app.intent('Play Episode', (conv, params) => {
                 })
             }));
         } else {
-            conv.ask(`Sorry, no screen!`);
+            // TODO: Extend to try and transfer session to another device with a screen (e.g. the user's phone).
+            conv.ask(`<speak><audio src="${samSorryNoScreenMessage.mp3Url}">${samSorryNoScreenMessage.text}</audio></speak>`);
         }
     }
 });
@@ -337,6 +348,8 @@ app.intent('List Episodes', (conv) => {
 
 app.intent('Subscribe', (conv) => {
     console.log("Subscribe");
+    // TODO: This needs to be extended to ask user permission to save their identity in a firebase table.
+    // Separate code (not in the app) then sends notifications to all subscribes when a new episode or verse becomes available.
     conv.ask(new Suggestions(['Unsubscribe', 'Tell me a verse', 'Play episode 1', 'Bye']));
     const msg = pickRandomMessage(subscribeMessages);
     respond(conv, msg.text, msg.mp3Url, "Subscribe", listOfEpisodesImageUrl, "Sam talking");
@@ -344,6 +357,7 @@ app.intent('Subscribe', (conv) => {
 
 app.intent('Unsubscribe', (conv) => {
     console.log("Unsubscribe");
+    // TODO: This needs to be extended to remove subscription record in firebase.
     conv.ask(new Suggestions(['Tell me a verse', 'List episodes', 'Bye']));
     const msg = pickRandomMessage(unsubscribeMessages);
     respond(conv, msg.text, msg.mp3Url, "Unsubscribe", listOfEpisodesImageUrl, "Sam talking");
