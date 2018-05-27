@@ -1,3 +1,6 @@
+This branch was created for a blog post I am writing. This version stops before
+adding Firestore access (database access).
+
 This is the source code of the "Extra Ordinary Bible Verses" Google Assistant
 application.
 
