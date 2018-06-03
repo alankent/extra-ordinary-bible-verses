@@ -15,20 +15,23 @@ const functions = require('firebase-functions');
 
 // ============================= Media ======================================
 
+//const mediaBase = 'https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media';
+const mediaBase = 'https://extra-ordinary-phase-1.firebaseapp.com';
+
 const bibleVerses = {
     1: {
         ref: "Ecclesiastes 4:9-10",
         text: "Two are better than one, because they have a good return for their work: If one falls down, his friend can help him up. But pity the man who falls and has no one to help him up!",
         characterName: "Deb",
-        characterUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Deb-Talk.png",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Deb-Eccles.mp3",
+        characterUrl: `${mediaBase}/Deb-Talk.png`,
+        mp3Url: `${mediaBase}/Deb-Eccles.mp3`,
     },
     2: {
         ref: "Philippians 4:8",
         text: "Whatever things are true, whatever things are noble, whatever things are just, whatever things are pure, whatever things are lovely, whatever things are of good report, if there is any virtue and if there is anything praiseworthy – meditate on these things.",
         characterName: "Deb",
-        characterUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Deb-Philipians.png",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Deb-Philipians.mp3",
+        characterUrl: `${mediaBase}/Deb-Philipians.png`,
+        mp3Url: `${mediaBase}/Deb-Philipians.mp3`,
     },
 };
 
@@ -36,13 +39,13 @@ const episodes = {
     1: {
         title: "Friendship",
         summary: "Sam reaches out to Hank, the new kid in school. But when he goes too far, is their friendship over before it starts?",
-        imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/ep1-friendship.png",
+        imageUrl: `${mediaBase}/ep1-friendship.png`,
         videoUrl: "https://youtu.be/hoNN8F7KxgM",
     },
     2: {
         title: "Good Thoughts",
         summary: "Is Liana right? Does Hank think Sam is just too annoying?",
-        imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/ep2-good-thoughts.png",
+        imageUrl: `${mediaBase}/ep2-good-thoughts.png`,
         videoUrl: "https://youtu.be/W0s6mKTGAFk",
     },
 };
@@ -50,142 +53,142 @@ const episodes = {
 const samWelcomeMessages = [
     {
         text: "Hi, I'm Sam! It's super cool to have you here! How can I help?",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Welcome-1.mp3",
+        mp3Url: `${mediaBase}/Sam-Welcome-1.mp3`,
     },
     {
         text: "I'ts Super Sam time!",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Welcome-2.mp3",
+        mp3Url: `${mediaBase}/Sam-Welcome-2.mp3`,
     },
 ];
 
-const samWelcomeImageUrl = "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Welcome.png";
+const samWelcomeImageUrl = `${mediaBase}/Sam-Welcome.png`;
 
 const samWhichEpisodeMessages = [
     {
         text: "Super sorry! Which episode did you want?",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-WhichEpisode-1.mp3",
+        mp3Url: `${mediaBase}/Sam-WhichEpisode-1.mp3`,
     },
 ];
 
-const samWhichEpisodeImageUrl = "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Confused.png";
+const samWhichEpisodeImageUrl = `${mediaBase}/Sam-Confused.png`;
 
 const samConfusedMessages = [
     {
         text: "Super sorry! I don't understand! You can ask me to tell you a bible verse, play an episode, or subscribe to be notified when there is something new for you.",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Confused-1.mp3",
+        mp3Url: `${mediaBase}/Sam-Confused-1.mp3`,
     },
     {
         text: "I'm super confused right now! Could you ask in a different way? You can ask me to tell you a bible verse, play an episode, or subscribe to be notified when there is something new for you.",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Confused-2.mp3",
+        mp3Url: `${mediaBase}/Sam-Confused-2.mp3`,
     },
 ];
 
-const samConfusedImageUrl = "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Confused.png";
+const samConfusedImageUrl = `${mediaBase}/Sam-Confused.png`;
 
 const samGiveUpMessages = [
     {
         text: "Sorry, my brain may be about to explode. I'm going to take a nap. See you next time!",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-GiveUp-1.mp3",
+        mp3Url: `${mediaBase}/Sam-GiveUp-1.mp3`,
     }
 ];
 
-const samGiveUpImageUrl = "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-GiveUp.png";
+const samGiveUpImageUrl = `${mediaBase}/Sam-GiveUp.png`;
 
 const samGoodbyeMessages = [
     {
         text: "It was super great seeing you here!",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Goodbye-1.mp3",
+        mp3Url: `${mediaBase}/Sam-Goodbye-1.mp3`,
     },
     {
         text: "Till next time!",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Goodbye-2.mp3",
+        mp3Url: `${mediaBase}/Sam-Goodbye-2.mp3`,
     },
 ];
 
-const samGoodbyeImageUrl = "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Bye.png";
+const samGoodbyeImageUrl = `${mediaBase}/Sam-Bye.png`;
 
 const listOfEpisodesMessages = [
     {
         // This recording has to be updated every time a new episode comes out because speech synthesis is not used.
         text: "1 Friendship, 2 Good Thoughts.",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-List-1.mp3",
+        mp3Url: `${mediaBase}/Sam-List-1.mp3`,
     },
 ];
 
-const listOfEpisodesImageUrl = "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-List.png";
+const listOfEpisodesImageUrl = `${mediaBase}/Sam-List.png`;
 
 const subscribeMessages = [
     {
         text: "Super cool! I will let you know when I have something great for you! Tricked you! Actually this does not work yet.",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Subscribe-1.mp3",
+        mp3Url: `${mediaBase}/Sam-Subscribe-1.mp3`,
     },
     {
         text: "Super special content is coming your way soon! Surprise! I can't actually do that yet...",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Subscribe-2.mp3",
+        mp3Url: `${mediaBase}/Sam-Subscribe-2.mp3`,
     },
 ];
 
-const subscribeImageUrl = "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Subscribe.png";
+const subscribeImageUrl = `${mediaBase}/Sam-Subscribe.png`;
 
 const unsubscribeMessages = [
     {
         text: "Sure thing! Feel free to subscribe again some other time!",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Unsubscribe-1.mp3",
+        mp3Url: `${mediaBase}/Sam-Unsubscribe-1.mp3`,
     },
     {
         text: "Okay! No more nagging from me!",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Unsubscribe-2.mp3",
+        mp3Url: `${mediaBase}/Sam-Unsubscribe-2.mp3`,
     },
 ];
 
-const unsubscribeImageUrl = "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Unsubscribe.png";
+const unsubscribeImageUrl = `${mediaBase}/Sam-Unsubscribe.png`;
 
 const verseFromByCharacter = {
     Sam: [{
         text: "Here's a verse from me!",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-VerseFrom-Sam.mp3",
-        imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-Talk.png",
+        mp3Url: `${mediaBase}/Sam-VerseFrom-Sam.mp3`,
+        imageUrl: `${mediaBase}/Sam-Talk.png`,
     }],
     Deb: [{
         text: "Here's a verse from Deb!",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-VerseFrom-Deb.mp3",
-        imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Deb-Talk.png",
+        mp3Url: `${mediaBase}/Sam-VerseFrom-Deb.mp3`,
+        imageUrl: `${mediaBase}/Deb-Talk.png`,
     }],
     Liana: [{
         text: "This verse is super fantastic from Liana!",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-VerseFrom-Liana.mp3",
-        imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Liana-Talk.png",
+        mp3Url: `${mediaBase}/Sam-VerseFrom-Liana.mp3`,
+        imageUrl: `${mediaBase}/Liana-Talk.png`,
     }],
     Elenor: [{
         text: "I think this is Elenors favorite verse!",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-VerseFrom-Elenor.mp3",
-        imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Elenor-Talk.png",
+        mp3Url: `${mediaBase}/Sam-VerseFrom-Elenor.mp3`,
+        imageUrl: `${mediaBase}/Elenor-Talk.png`,
     }],
     Hank: [{
         text: "Hank agreed to share this verse.",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-VerseFrom-Hank.mp3",
-        imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Hank-Talk.png",
+        mp3Url: `${mediaBase}/Sam-VerseFrom-Hank.mp3`,
+        imageUrl: `${mediaBase}/Hank-Talk.png`,
     }],
     Helen: [{
         text: "This verse is special to Helen.",
-        mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-VerseFrom-Helen.mp3",
-        imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Helen-Talk.png",
+        mp3Url: `${mediaBase}/Sam-VerseFrom-Helen.mp3`,
+        imageUrl: `${mediaBase}/Helen-Talk.png`,
     }],
     Bear: [{
         text: "Bear often keeps to himself, but had this verse to share.",
         mp3Url: "",
-        imageUrl: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Bear-Talk.png",
+        imageUrl: `${mediaBase}/Bear-Talk.png`,
     }],
 };
 
 const samHereIsYourEpisodeMessage = {
     text: "Here is your episode!",
-    mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-YourEpisode.mp3",
+    mp3Url: `${mediaBase}/Sam-YourEpisode.mp3`,
 };
 
 const samSorryNoScreenMessage = {
     text: "Sorry, I cannot find a screen to play the video on!",
-    mp3Url: "https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media/Sam-NoScreen.mp3",
+    mp3Url: `${mediaBase}/Sam-NoScreen.mp3`,
 };
 
 
