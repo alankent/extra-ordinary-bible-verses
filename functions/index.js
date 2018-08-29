@@ -60,7 +60,7 @@ const samWelcomeMessages = [
         //mp3Url: `${mediaBase}/Sam-Welcome-1.mp3`,
     //},
     {
-        text: "v21. I'ts Super Sam time!",
+        text: "v23. I'ts Super Sam time!",
         mp3Url: `${mediaBase}/Sam-Welcome-2.mp3`,
     },
 ];
@@ -370,7 +370,7 @@ app.intent('Play Episode', (conv, params) => {
     console.log(`*** Play Episode ${episode} ***`);
     conv.data.fallbackCount = 0;
 
-    if (episode == null) {
+    if (episode === null || !(episode in episodes)) {
         conv.ask(new Suggestions(['List episodes', 'Play episode 1', 'Bye']));
         const msg = pickRandomMessage(samWhichEpisodeMessages);
         respond(conv, msg.text, msg.mp3Url, "Which episode?", samWhichEpisodeImageUrl, "Sam talking");
