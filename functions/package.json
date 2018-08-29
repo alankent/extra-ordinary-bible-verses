@@ -20,10 +20,10 @@
   },
   "dependencies": {
     "actions-on-google": "2.0.0-alpha.4",
-    "firebase-admin": "~5.12.1",
-    "firebase-functions": "^1.0.3",
     "dialogflow": "^0.1.0",
-    "dialogflow-fulfillment": "0.3.0-beta.3"
+    "dialogflow-fulfillment": "0.3.0-beta.3",
+    "firebase-admin": "~5.12.1",
+    "firebase-functions": "^2.0.5"
   },
   "devDependencies": {
     "eslint": "^4.12.0",

@@ -8,19 +8,20 @@ const {
     Button,
     Image,
     Suggestions,
-    SignIn,
-    UpdatePermission,
     NewSurface,
 } = require('actions-on-google');
 const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-//const { CLIENT_ID } = require('./secret.js');
+
+/*
+//const { Request } = require('express');
+const auth = require('./secret.js');
+*/
 
 
 // ============================= Media ======================================
 
 //const mediaBase = 'https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media';
-const mediaBase = 'https://extra-ordinary-phase-2-bf6e0.firebaseapp.com';
+const mediaBase = 'https://extra-ordinary-phase-1.firebaseapp.com';
 
 const bibleVerses = {
     1: {
@@ -55,12 +56,12 @@ const episodes = {
 };
 
 const samWelcomeMessages = [
-    //{
-        //text: "Hi, I'm Sam! It's super cool to have you here! How can I help?",
-        //mp3Url: `${mediaBase}/Sam-Welcome-1.mp3`,
-    //},
     {
-        text: "v21. I'ts Super Sam time!",
+        text: "- Hi, I'm Sam! It's super cool to have you here! How can I help?",
+        mp3Url: `${mediaBase}/Sam-Welcome-1.mp3`,
+    },
+    {
+        text: "- I'ts Super Sam time!",
         mp3Url: `${mediaBase}/Sam-Welcome-2.mp3`,
     },
 ];
@@ -198,11 +199,35 @@ const samSorryNoScreenMessage = {
 
 // ============================== Application ================================
 
-admin.initializeApp(functions.config().firebase);
-const db = admin.firestore();
-
 const app = dialogflow({debug: true});
-//const app = dialogflow({debug: true, clientId: CLIENT_ID});
+
+
+/*
+// Implementat HTTP authentication - username/password is stored in a
+// separate file so it does not have to be committed to git with the rest
+// of the code. The file contains {login:'assistant', password:'secret'}.
+//
+// From https://stackoverflow.com/questions/23616371/basic-http-authentication-with-node-and-express-4
+app.use(function (req, res, next) {
+    console.log(auth);
+    console.log(req.headers);
+
+    console.log(req.headers.authorization);
+    const b64auth = (req.headers.authorization || '').split(' ')[1] || ''
+    const [login, password] = new Buffer(b64auth, 'base64').toString().split(':')
+    if (!login || !password || login !== auth.login || password !== auth.password) {
+	var err = new Error("Authentication required.");
+	err.status = 401;
+	next(err);
+	return;
+        //res.set('WWW-Authenticate', 'Basic realm="401"');
+        //res.status(401).send('Authentication required.') ;
+	//return
+    } 
+    next();
+});
+*/
+
 
 function pickRandomMessage(messages) {
     return messages[Math.floor(Math.random() * messages.length)];
@@ -231,7 +256,6 @@ function respond(conv, longText, mp3Url, title, imageUrl, imageAlt) {
 }
 
 app.middleware((conv) => {
-	console.log(">>> " + JSON.stringify(Object.keys(conv)) + " <<<");
     conv.hasScreen = conv.surface.capabilities.has('actions.capability.SCREEN_OUTPUT');
     conv.hasAudioPlayback = conv.surface.capabilities.has('actions.capability.AUDIO_OUTPUT');
     conv.hasMediaPlayback = conv.surface.capabilities.has('actions.capability.MEDIA_RESPONSE_AUDIO');
@@ -246,7 +270,7 @@ app.fallback((conv) => {
 });
 
 app.intent('Default Welcome Intent', (conv) => {
-    console.log("*** Default Welcome Intent ***");
+    console.log("Default Welcome Intent");
     conv.data.fallbackCount = 0;
     conv.ask(new Suggestions(['Say a verse', 'Play episode 1', 'List episodes']));
     const msg = pickRandomMessage(samWelcomeMessages);
@@ -254,7 +278,7 @@ app.intent('Default Welcome Intent', (conv) => {
 });
 
 app.intent('Default Fallback Intent', (conv) => {
-    console.log("*** Default fallback intent ***");
+    console.log("Default fallback intent");
     conv.data.fallbackCount++;
     conv.ask(new Suggestions(['Say a verse', 'Play episode 1', 'Subscribe']));
     if (conv.data.fallbackCount < 3) {
@@ -268,44 +292,15 @@ app.intent('Default Fallback Intent', (conv) => {
 });
 
 app.intent('Goodbye', (conv) => {
-    console.log("*** Goodbye ***");
+    console.log("Goodbye");
     const msg = pickRandomMessage(samGoodbyeMessages);
     respond(conv, msg.text, msg.mp3Url, "Bye!", samGoodbyeImageUrl, "Sam waving goodbye!");
     conv.close();
 });
 
 app.intent('Play Random Bible Verse', (conv) => {
-    console.log("*** Play Random Bible Verse ***");
+    console.log("Play Random Bible Verse");
 
-    const verse = pickRandomVerse();
-    const {ref, text, characterName, characterUrl, mp3Url} = verse;
-    const verseFrom = pickRandomMessage(verseFromByCharacter[characterName]);
-    
-    conv.ask(new Suggestions(['Another verse', 'List Episodes', 'Bye']));
-    conv.data.fallbackCount = 0;
-      
-    if (conv.hasScreen) {
-        
-        conv.ask(`<speak><s><audio src="${verseFrom.mp3Url}">${verseFrom.text}</audio></s> <audio src='${mp3Url}'></audio></speak>`);
-        conv.ask(new BasicCard({
-            title: ref,
-            subTitle: characterName,
-            image: new Image({
-                url: characterUrl,
-                alt: characterName,
-            }),
-            text: text,
-        }));
-
-    } else {
-        conv.ask(`<speak><s><audio src="${verseFrom.mp3Url}">${verseFrom.text}</audio></s> <audio src='${mp3Url}'>${text}</audio></speak>`);
-    }
-});
-
-app.intent('New Bible Verse', (conv) => {
-    console.log("*** New Bible Verse ***");
-
-    //TODO: THIS should remember verses played before, then only play a verse they have not heard before.
     const verse = pickRandomVerse();
     const {ref, text, characterName, characterUrl, mp3Url} = verse;
     const verseFrom = pickRandomMessage(verseFromByCharacter[characterName]);
@@ -332,7 +327,7 @@ app.intent('New Bible Verse', (conv) => {
 });
 
 app.intent('Play Specific Verse Number', (conv, params) => {
-    console.log("*** Play Specific Verse ***");
+    console.log("Play Specific Verse");
 
     let verseId = params.verse;
     if (verseId === null || !(verseId in bibleVerses)) {
@@ -367,15 +362,14 @@ app.intent('Play Specific Verse Number', (conv, params) => {
 app.intent('Play Episode', (conv, params) => {
 
     let episode = params.episode;
-    console.log(`*** Play Episode ${episode} ***`);
+    console.log(`Play Episode ${episode}`);
     conv.data.fallbackCount = 0;
 
-    if (episode == null) {
+    if (episode === null) {
         conv.ask(new Suggestions(['List episodes', 'Play episode 1', 'Bye']));
         const msg = pickRandomMessage(samWhichEpisodeMessages);
         respond(conv, msg.text, msg.mp3Url, "Which episode?", samWhichEpisodeImageUrl, "Sam talking");
     } else {
-	console.log(JSON.stringify(episodes[episode]));
         const {title, imageUrl, videoUrl, summary} = episodes[episode];
         
         conv.ask(new Suggestions(['Another verse', 'List Episodes', 'Bye']));
@@ -414,7 +408,7 @@ app.intent('Play Episode', (conv, params) => {
 
 app.intent('List Episodes', (conv) => {
 
-    console.log("*** List of Episodes ***");
+    console.log("List of Episodes");
     conv.data.fallbackCount = 0;
 
     // let s = ``;
@@ -432,77 +426,18 @@ app.intent('List Episodes', (conv) => {
     respond(conv, msg.text, msg.mp3Url, "List of Episodes", listOfEpisodesImageUrl, "Sam talking");
 });
 
-function getUserId(conv) {
-    //TODO: If not subscribed already... see conv.userStorage.
-	console.log(JSON.stringify(conv.user.storage));
-    if (!conv.user.storage.subscriberId) {
-	console.log("Asking for permissions to notify");
-        conv.ask(new UpdatePermission({intent: 'New Bible Verse'}));
-        //conv.ask(new UpdatePermission({intent: 'new_bible_verse'}));
-	console.log("created new_bible_verse update");
-	    //conv.ask("Permissions please to spam you?");
-        //conv.ask(new UpdatePermission({intent: 'new_bible_verse'}));
-	return null;
-    }
-	console.log("No need to ask for permission");
-    return conv.user.storage.subscriberId;
-}
-
 app.intent('Subscribe', (conv) => {
-    console.log("*** Subscribe ***");
-
-    const userId = getUserId(conv);
-	if (userId === null) {
-	console.log("No permission to get user id");
-		return;
-	}
-	console.log("Great, userid is " + userId);
-
+    console.log("Subscribe");
     // TODO: This needs to be extended to ask user permission to save their identity in a firebase table.
     // Separate code (not in the app) then sends notifications to all subscribes when a new episode or verse becomes available.
-
-	/*
-    console.log(JSON.stringify(conv.user));
-    if (!conv.user.profile) {
-        conv.ask(new SignIn('To get your account details'));
-        return;
-    }
-    const userId = conv.user.profile.sub;
-    console.log(`USERID = ${userId}`);
-    var userData = db.collection('users').doc(userId);
-    userData.set({'subscribed':true});
-    */
-
     conv.ask(new Suggestions(['Unsubscribe', 'Tell me a verse', 'Play episode 1', 'Bye']));
     const msg = pickRandomMessage(subscribeMessages);
     respond(conv, msg.text, msg.mp3Url, "Subscribe", listOfEpisodesImageUrl, "Sam talking");
 });
 
-app.intent('Subscription Intent Permission', (conv) => {
-    console.log("*** Subscription Intent Permission ***");
-    if (conv.arguments.get('PERMISSION')) {
-	console.log("Got permission!");
-	console.log(JSON.stringify(conv.arguments));
-        const userId = conv.arguments.get('UPDATES_USER_ID');
-	console.log("Userid is " + userId);
-        //TODO: SAVE TO DB?
-        conv.user.storage.subscriberId = userId;
-        conv.ask(new Suggestions(['Unsubscribe', 'Play episode 1', 'Bye']));
-        const msg = pickRandomMessage(subscribeMessages);
-        respond(conv, msg.text, msg.mp3Url, "Subscribe", listOfEpisodesImageUrl, "Sam talking");
-    } else {
-        //TODO: Better 'okay, maybe later' response.
-	console.log("Permission not granted");
-        conv.ask('Ok, feel free to subscribe later if you want to.');
-        delete conv.user.storage.subscriberId;
-    }
-});
-
 app.intent('Unsubscribe', (conv) => {
-    console.log("*** Unsubscribe ***");
-    // TODO: Could say 'you were not subscribed' to be friendlier.
+    console.log("Unsubscribe");
     // TODO: This needs to be extended to remove subscription record in firebase.
-    delete conv.user.storage.subscriberId;
     conv.ask(new Suggestions(['Tell me a verse', 'List episodes', 'Bye']));
     const msg = pickRandomMessage(unsubscribeMessages);
     respond(conv, msg.text, msg.mp3Url, "Unsubscribe", listOfEpisodesImageUrl, "Sam talking");
@@ -510,7 +445,7 @@ app.intent('Unsubscribe', (conv) => {
 
 // This is how the app is launched if control was transferred from a different device.
 app.intent('Get New Surface', (conv, input, newSurface) => {
-    console.log("*** GET NEW SURFACE ***");
+    console.log("GET NEW SURFACE");
 
     if (newSurface.status === 'OK') {
         
