@@ -231,7 +231,7 @@ function respond(conv, longText, mp3Url, title, imageUrl, imageAlt) {
 }
 
 app.middleware((conv) => {
-	console.log(">>> " + JSON.stringify(Object.keys(conv)) + " <<<");
+    console.log(">>> " + JSON.stringify(Object.keys(conv)) + " <<<");
     conv.hasScreen = conv.surface.capabilities.has('actions.capability.SCREEN_OUTPUT');
     conv.hasAudioPlayback = conv.surface.capabilities.has('actions.capability.AUDIO_OUTPUT');
     conv.hasMediaPlayback = conv.surface.capabilities.has('actions.capability.MEDIA_RESPONSE_AUDIO');
@@ -375,7 +375,7 @@ app.intent('Play Episode', (conv, params) => {
         const msg = pickRandomMessage(samWhichEpisodeMessages);
         respond(conv, msg.text, msg.mp3Url, "Which episode?", samWhichEpisodeImageUrl, "Sam talking");
     } else {
-	console.log(JSON.stringify(episodes[episode]));
+        console.log(JSON.stringify(episodes[episode]));
         const {title, imageUrl, videoUrl, summary} = episodes[episode];
         
         conv.ask(new Suggestions(['Another verse', 'List Episodes', 'Bye']));
@@ -434,17 +434,17 @@ app.intent('List Episodes', (conv) => {
 
 function getUserId(conv) {
     //TODO: If not subscribed already... see conv.userStorage.
-	console.log(JSON.stringify(conv.user.storage));
+    console.log(JSON.stringify(conv.user.storage));
     if (!conv.user.storage.subscriberId) {
-	console.log("Asking for permissions to notify");
+        console.log("Asking for permissions to notify");
         conv.ask(new UpdatePermission({intent: 'New Bible Verse'}));
         //conv.ask(new UpdatePermission({intent: 'new_bible_verse'}));
-	console.log("created new_bible_verse update");
-	    //conv.ask("Permissions please to spam you?");
+        console.log("created new_bible_verse update");
+        //conv.ask("Permissions please to spam you?");
         //conv.ask(new UpdatePermission({intent: 'new_bible_verse'}));
-	return null;
+        return null;
     }
-	console.log("No need to ask for permission");
+    console.log("No need to ask for permission");
     return conv.user.storage.subscriberId;
 }
 
@@ -452,16 +452,16 @@ app.intent('Subscribe', (conv) => {
     console.log("*** Subscribe ***");
 
     const userId = getUserId(conv);
-	if (userId === null) {
-	console.log("No permission to get user id");
-		return;
-	}
-	console.log("Great, userid is " + userId);
+    if (userId === null) {
+    console.log("No permission to get user id");
+        return;
+    }
+    console.log("Great, userid is " + userId);
 
     // TODO: This needs to be extended to ask user permission to save their identity in a firebase table.
     // Separate code (not in the app) then sends notifications to all subscribes when a new episode or verse becomes available.
 
-	/*
+    /*
     console.log(JSON.stringify(conv.user));
     if (!conv.user.profile) {
         conv.ask(new SignIn('To get your account details'));
@@ -481,10 +481,10 @@ app.intent('Subscribe', (conv) => {
 app.intent('Subscription Intent Permission', (conv) => {
     console.log("*** Subscription Intent Permission ***");
     if (conv.arguments.get('PERMISSION')) {
-	console.log("Got permission!");
-	console.log(JSON.stringify(conv.arguments));
+        console.log("Got permission!");
+        console.log(JSON.stringify(conv.arguments));
         const userId = conv.arguments.get('UPDATES_USER_ID');
-	console.log("Userid is " + userId);
+        console.log("Userid is " + userId);
         //TODO: SAVE TO DB?
         conv.user.storage.subscriberId = userId;
         conv.ask(new Suggestions(['Unsubscribe', 'Play episode 1', 'Bye']));
@@ -492,7 +492,7 @@ app.intent('Subscription Intent Permission', (conv) => {
         respond(conv, msg.text, msg.mp3Url, "Subscribe", listOfEpisodesImageUrl, "Sam talking");
     } else {
         //TODO: Better 'okay, maybe later' response.
-	console.log("Permission not granted");
+        console.log("Permission not granted");
         conv.ask('Ok, feel free to subscribe later if you want to.');
         delete conv.user.storage.subscriberId;
     }
