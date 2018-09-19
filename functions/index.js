@@ -14,14 +14,16 @@ const {
 } = require('actions-on-google');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-//const { CLIENT_ID } = require('./secret.js');
+
+const VERSION = 'v35';
 
 
 // ============================= Media ======================================
 
-//const mediaBase = 'https://storage.googleapis.com/extra-ordinary-assistant-assets/v1/media';
 const mediaBase = 'https://extra-ordinary-phase-2-bf6e0.firebaseapp.com';
 
+// Verses must be allocatd 1, 2, 3, 4, ... etc.
+const latestVerseAvailable = 2;
 const bibleVerses = {
     1: {
         ref: "Ecclesiastes 4:9-10",
@@ -55,12 +57,12 @@ const episodes = {
 };
 
 const samWelcomeMessages = [
-    //{
-        //text: "Hi, I'm Sam! It's super cool to have you here! How can I help?",
-        //mp3Url: `${mediaBase}/Sam-Welcome-1.mp3`,
-    //},
     {
-        text: "v23. I'ts Super Sam time!",
+        text: `Hi, I'm Sam! It's super cool to have you here! How can I help? [${VERSION}]`,
+        mp3Url: `${mediaBase}/Sam-Welcome-1.mp3`,
+    },
+    {
+        text: `I'ts Super Sam time! [${VERSION}]`,
         mp3Url: `${mediaBase}/Sam-Welcome-2.mp3`,
     },
 ];
@@ -200,9 +202,9 @@ const samSorryNoScreenMessage = {
 
 admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
+//db.settings({ timestampsInSnapshots: true });
 
 const app = dialogflow({debug: true});
-//const app = dialogflow({debug: true, clientId: CLIENT_ID});
 
 function pickRandomMessage(messages) {
     return messages[Math.floor(Math.random() * messages.length)];
@@ -215,7 +217,12 @@ function pickRandomVerse() {
 function respond(conv, longText, mp3Url, title, imageUrl, imageAlt) {
 
     if (conv.hasScreen) {
-        const shortText = pickRandomMessage(["Here you go!", "Coming right up!", "I'm on it!", "Super fast is super cool!"]);
+        const shortText = pickRandomMessage([
+                "Here you go!",
+                "Coming right up!",
+                "I'm on it!",
+                "Super fast is super cool!"
+            ]);
         conv.ask(`<speak><audio src="${mp3Url}">${shortText}</audio></speak>`);
         conv.ask(new BasicCard({
             title: title,
@@ -239,7 +246,7 @@ app.middleware((conv) => {
 });
 
 app.fallback((conv) => {
-    console.log("Fallback");
+    console.log("*** Fallback ***");
     conv.ask(new Suggestions(['Say a verse', 'Play episode 1', 'Subscribe']));
     const msg = pickRandomMessage(samConfusedMessages);
     respond(conv, msg.text, msg.mp3Url, "Sorry! I don't understand!", samConfusedImageUrl, "Confused Sam");
@@ -305,8 +312,35 @@ app.intent('Play Random Bible Verse', (conv) => {
 app.intent('New Bible Verse', (conv) => {
     console.log("*** New Bible Verse ***");
 
-    //TODO: THIS should remember verses played before, then only play a verse they have not heard before.
-    const verse = pickRandomVerse();
+    let verse = null;
+    if ('latestVersePlayed' in conv.user.storage) {
+        console.log("latestVersePlayed = " + conv.user.storage.latestVersePlayed);
+        console.log("earliestVersePlayed = " + conv.user.storage.earliestVersePlayed);
+        // We have played something before.
+        if (conv.user.storage.latestVersePlayed < latestVerseAvailable) {
+            // We played something before, but there is something newer!
+            console.log("-- something newer is available");
+            conv.user.storage.latestVersePlayed = latestVerseAvailable;
+            conv.user.storage.earliestVersePlayed = latestVerseAvailable;
+            verse = bibleVerses[latestVerseAvailable];
+        } else if (conv.user.storage.earliestVersePlayed > 1) {
+            // Pick an earlier verse.
+            console.log("-- picking earlier verse");
+            conv.user.storage.earliestVersePlayed--;
+            verse = bibleVerses[conv.user.storage.earliestVersePlayed];
+        } else {
+            // If played them all, pick a random verse.
+            console.log("-- done them all, picking random verse");
+            verse = pickRandomVerse();
+        }
+    } else {
+        // We have not played anything. Return the most recent verse first.
+        console.log("-- first time playing a verse");
+        conv.user.storage.latestVersePlayed = latestVerseAvailable;
+        conv.user.storage.earliestVersePlayed = latestVerseAvailable;
+        verse = bibleVerses[latestVerseAvailable];
+    }
+
     const {ref, text, characterName, characterUrl, mp3Url} = verse;
     const verseFrom = pickRandomMessage(verseFromByCharacter[characterName]);
     
@@ -433,15 +467,10 @@ app.intent('List Episodes', (conv) => {
 });
 
 function getUserId(conv) {
-    //TODO: If not subscribed already... see conv.userStorage.
-    console.log(JSON.stringify(conv.user.storage));
+    console.log("USER STORAGE: " + JSON.stringify(conv.user.storage));
     if (!conv.user.storage.subscriberId) {
         console.log("Asking for permissions to notify");
         conv.ask(new UpdatePermission({intent: 'New Bible Verse'}));
-        //conv.ask(new UpdatePermission({intent: 'new_bible_verse'}));
-        console.log("created new_bible_verse update");
-        //conv.ask("Permissions please to spam you?");
-        //conv.ask(new UpdatePermission({intent: 'new_bible_verse'}));
         return null;
     }
     console.log("No need to ask for permission");
@@ -451,42 +480,79 @@ function getUserId(conv) {
 app.intent('Subscribe', (conv) => {
     console.log("*** Subscribe ***");
 
-    const userId = getUserId(conv);
+    let userId = getUserId(conv);
     if (userId === null) {
-    console.log("No permission to get user id");
+
+        // If no userId, then we are asking the user for permission.
+        console.log("No permission to get user id");
         return;
     }
+
+    // We have permission, so subscribe the user immeidately.
     console.log("Great, userid is " + userId);
 
-    // TODO: This needs to be extended to ask user permission to save their identity in a firebase table.
-    // Separate code (not in the app) then sends notifications to all subscribes when a new episode or verse becomes available.
-
-    /*
-    console.log(JSON.stringify(conv.user));
-    if (!conv.user.profile) {
-        conv.ask(new SignIn('To get your account details'));
-        return;
-    }
-    const userId = conv.user.profile.sub;
-    console.log(`USERID = ${userId}`);
-    var userData = db.collection('users').doc(userId);
-    userData.set({'subscribed':true});
-    */
+    // Save subscription in database.
+    console.log(`Adding subscription to DB '${userId}'.`);
+    db.collection('subscriptions')
+        .doc(userId)
+        .set({
+            notify: true,
+            firstSubscription: new Date()
+        }, {merge: true});
 
     conv.ask(new Suggestions(['Unsubscribe', 'Tell me a verse', 'Play episode 1', 'Bye']));
     const msg = pickRandomMessage(subscribeMessages);
     respond(conv, msg.text, msg.mp3Url, "Subscribe", listOfEpisodesImageUrl, "Sam talking");
 });
 
+function unsubscribe(conv)
+{
+    let userId = conv.user.storage.subscriberId;
+    console.log(`UNSUBSCRIBING: '${userId}'`);
+    if (userId !== null) {
+
+        // Do not remove userId from session data as it is not provided again
+        // later if want to resubscribe. So remove from DB, but leave in
+        // session state until session expires.
+        //delete conv.user.storage.subscriberId;
+
+        // Record that the user does not want notifications in database.
+        console.log(`Updating database '${userId}'.`);
+        db.collection('subscriptions')
+            .doc(userId)
+            .set({
+                notify: false,
+                unsubscribed: new Date()
+            }, {merge: true});
+    }
+}
+
 app.intent('Subscription Intent Permission', (conv) => {
     console.log("*** Subscription Intent Permission ***");
+
     if (conv.arguments.get('PERMISSION')) {
+
         console.log("Got permission!");
         console.log(JSON.stringify(conv.arguments));
         const userId = conv.arguments.get('UPDATES_USER_ID');
         console.log("Userid is " + userId);
-        //TODO: SAVE TO DB?
-        conv.user.storage.subscriberId = userId;
+
+        // Keep userId if provided (it is provided first time but not
+        // on subsequent requests).
+        if (userId) {
+            conv.user.storage.subscriberId = userId;
+            console.log("Updated subscriberId in user store");
+        }
+
+        // Save subscription in database.
+        console.log(`Adding subscription to DB '${conv.user.storage.subscriberId}'.`);
+        db.collection('subscriptions')
+            .doc(conv.user.storage.subscriberId)
+            .set({
+                notify: true,
+                firstSubscription: new Date()
+            }, {merge: true});
+
         conv.ask(new Suggestions(['Unsubscribe', 'Play episode 1', 'Bye']));
         const msg = pickRandomMessage(subscribeMessages);
         respond(conv, msg.text, msg.mp3Url, "Subscribe", listOfEpisodesImageUrl, "Sam talking");
@@ -494,15 +560,14 @@ app.intent('Subscription Intent Permission', (conv) => {
         //TODO: Better 'okay, maybe later' response.
         console.log("Permission not granted");
         conv.ask('Ok, feel free to subscribe later if you want to.');
-        delete conv.user.storage.subscriberId;
+        unsubscribe(conv);
     }
 });
 
 app.intent('Unsubscribe', (conv) => {
     console.log("*** Unsubscribe ***");
-    // TODO: Could say 'you were not subscribed' to be friendlier.
-    // TODO: This needs to be extended to remove subscription record in firebase.
-    delete conv.user.storage.subscriberId;
+    // TODO: Could check if not subscribed and output a different message.
+    unsubscribe(conv);
     conv.ask(new Suggestions(['Tell me a verse', 'List episodes', 'Bye']));
     const msg = pickRandomMessage(unsubscribeMessages);
     respond(conv, msg.text, msg.mp3Url, "Unsubscribe", listOfEpisodesImageUrl, "Sam talking");
